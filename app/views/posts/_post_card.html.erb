@@ -1,0 +1,39 @@
+<div class="card p-3">
+  <div class="d-flex align-items-center gap-2 mb-2">
+    <%= avatar_for(post.nui, size: 40) %>
+    <div>
+      <div class="fw-semibold"><%= post.nui.name %></div>
+      <div class="text-muted small"><%= l(post.created_at, format: :short) rescue post.created_at.to_s(:short) %></div>
+    </div>
+  </div>
+
+  <% if post.content.present? %>
+    <p class="mb-2"><%= simple_format(h(post.content)) %></p>
+  <% end %>
+
+  <%# 画像を添付している場合の表示（Active Storageを使っている場合） %>
+  <% if post.respond_to?(:image) && post.image&.attached? %>
+    <div class="mb-2">
+      <%= image_tag post.image.variant(resize_to_limit: [1200, 1200]) %>
+    </div>
+  <% end %>
+
+  <div class="d-flex align-items-center gap-3 small">
+    <span>いいね: <%= post.likes.size %></span>
+    <span>コメント: <%= post.comments.size %></span>
+
+    <%= link_to "詳細", [post.nui, post], class: "ms-auto" %>
+
+    <%# いいね（ユーザー単位） %>
+    <% if user_signed_in? %>
+      <% liked = post.liked_users.include?(current_user) %>
+      <% if liked %>
+        <%= button_to "いいね解除", [post.nui, post, :like],
+                      method: :delete, class: "btn btn-sm btn-outline-secondary" %>
+      <% else %>
+        <%= button_to "いいね", [post.nui, post, :like],
+                      method: :post, class: "btn btn-sm btn-outline-primary" %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

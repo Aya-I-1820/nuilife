@@ -1,0 +1,13 @@
+<% @posts.each do |post| %>
+  <div class="post-card">
+    <strong><%= post.nui.name %></strong>
+    <p><%= post.content %></p>
+
+    <!-- コメント数だけを表示 -->
+    <p>
+      コメント数: <%= post.comments.size %>
+      <%= link_to "詳細を見る", post_path(post) %>
+    </p>
+    <p>いいね数: <%= post.likes.size %></p>
+  </div>
+<% end %>

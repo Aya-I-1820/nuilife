@@ -1,0 +1,43 @@
+<h2>コメント</h2>
+<div class="mb-3">
+  <strong><%= @nui.name %></strong>
+</div>
+<p><%= @post.content %></p>
+<%# 画像を表示する場合は ActiveStorage の記述を追加 %>
+
+<% @post.comments.each do |comment| %>
+  <div class="comment">
+    <strong><%= comment.nui.name %></strong>:
+    <%= comment.content %>
+
+    <% if comment.nui == current_nui %>
+      <%= link_to "削除", post_comment_path(@post, comment),
+                  method: :delete, data: { confirm: "削除しますか？" } %>
+    <% end %>
+  </div>
+<% end %>
+
+<% if current_nui %>
+  <%= form_with model: [@post, Comment.new], local: true do |f| %>
+    <div>
+      <%= f.text_area :content, rows: 3, placeholder: "コメントを書く..." %>
+    </div>
+    <div>
+      <%= f.submit "コメントする" %>
+    </div>
+  <% end %>
+<% else %>
+  <p>コメントするにはぬいを選んでください。</p>
+<% end %>
+
+<p>
+  いいね数: <%= @post.likes.count %>
+</p>
+
+<% if current_user %>
+  <% if @post.liked_users.include?(current_user) %>
+    <%= button_to "いいね解除", post_like_path(@post), method: :delete %>
+  <% else %>
+    <%= button_to "いいね", post_like_path(@post), method: :post %>
+  <% end %>
+<% end %>

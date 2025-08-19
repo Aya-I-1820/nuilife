@@ -1,15 +1,16 @@
-/*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
- *
- * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
- * vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- *= require_tree .
- *= require_self
- */
+.avatar-circle {
+    display: inline-block;
+    border-radius: 50%;
+    object-fit: cover;      /* 画像の切り抜きに必須（中央寄せで見栄えUP） */
+    vertical-align: middle;
+  }
+  
+  .avatar-placeholder {
+    text-align: center;
+    font-weight: 600;
+    background: #f6f6f6;
+    color: #666;
+    border: 1px solid #e5e5e5;
+    border-radius: 50%;
+  }
+  
