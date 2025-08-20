@@ -1,9 +1,12 @@
-<h2>コメント</h2>
 <div class="mb-3">
   <strong><%= @nui.name %></strong>
 </div>
-<p><%= @post.content %></p>
-<%# 画像を表示する場合は ActiveStorage の記述を追加 %>
+<p><%= simple_format(h(@post.post)) %></p>
+
+<% if @post.image&.attached? %>
+  <%= image_tag @post.image.variant(resize_to_limit: [400, 400]).processed, class: "img-fluid rounded" %>
+<% end %>
+
 
 <% @post.comments.each do |comment| %>
   <div class="comment">
@@ -17,27 +20,66 @@
   </div>
 <% end %>
 
-<% if current_nui %>
-  <%= form_with model: [@post, Comment.new], local: true do |f| %>
-    <div>
-      <%= f.text_area :content, rows: 3, placeholder: "コメントを書く..." %>
-    </div>
-    <div>
-      <%= f.submit "コメントする" %>
-    </div>
+<hr>
+<h2 class="h5 mt-4">コメント</h2>
+
+<% if @comments.any? %>
+  <div class="vstack gap-3 mb-3">
+    <% @comments.each do |c| %>
+      <div class="d-flex align-items-start gap-2">
+        <%= avatar_for(c.nui, size: 28) %>
+        <div>
+          <div class="small text-muted"><strong><%= c.nui.name %></strong></div>
+          <div><%= simple_format(h(c.content)) %></div>
+          <% if user_signed_in? && c.nui.user_id == current_user.id %>
+            <div class="small">
+              <%= link_to "削除", [@nui, @post, c],
+                          data: { turbo_method: :delete, turbo_confirm: "削除しますか？" } %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p class="text-muted">まだコメントがありません。</p>
+<% end %>
+
+<% if user_signed_in? %>
+  <% user_nuis = current_user.nuis.where.not(id: nil) %>
+  <% if user_nuis.exists? %>
+    <h3 class="h6">コメントを書く</h3>
+    <%= form_with model: [@nui, @post, Comment.new], local: true do |f| %>
+      <div class="mb-2">
+        <%= label_tag :nui_id, "どのぬいでコメントしますか？" %>
+        <%= select_tag "comment[nui_id]",
+              options_from_collection_for_select(user_nuis, :id, :name),
+              class: "form-select" %>
+      </div>
+      <div class="mb-2">
+        <%= f.text_area :content, rows: 3, class: "form-control",
+                        placeholder: "コメントを入力…" %>
+      </div>
+      <%= f.submit "コメントする", class: "btn btn-primary btn-sm" %>
+    <% end %>
+  <% else %>
+    <p class="text-muted">コメントするには、まず <%= link_to "ぬいを作成", new_nui_path %> してください。</p>
   <% end %>
 <% else %>
-  <p>コメントするにはぬいを選んでください。</p>
+  <p class="text-muted">コメントするには <%= link_to "ログイン", new_user_session_path %> してください。</p>
 <% end %>
+
 
 <p>
   いいね数: <%= @post.likes.count %>
 </p>
 
-<% if current_user %>
-  <% if @post.liked_users.include?(current_user) %>
-    <%= button_to "いいね解除", post_like_path(@post), method: :delete %>
+<% if user_signed_in? %>
+  <% liked = @post.liked_users.exists?(current_user.id) %>
+
+  <% if liked %>
+    <%= button_to "いいね解除", [@post.nui, @post, :like], method: :delete %>
   <% else %>
-    <%= button_to "いいね", post_like_path(@post), method: :post %>
+    <%= button_to "いいね", [@post.nui, @post, :like], method: :post %>
   <% end %>
 <% end %>

@@ -1,13 +1,49 @@
-<% @posts.each do |post| %>
-  <div class="post-card">
-    <strong><%= post.nui.name %></strong>
-    <p><%= post.content %></p>
+<!-- app/views/posts/index.html.erb -->
+<div class="container py-4">
+  <h1 class="h4 mb-3">みんなの投稿</h1>
 
-    <!-- コメント数だけを表示 -->
-    <p>
-      コメント数: <%= post.comments.size %>
-      <%= link_to "詳細を見る", post_path(post) %>
-    </p>
-    <p>いいね数: <%= post.likes.size %></p>
-  </div>
-<% end %>
+  <% if @posts.any? %>
+    <div class="vstack gap-3">
+      <% @posts.each do |post| %>
+        <div class="card p-3">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <%= avatar_for(post.nui, size: 40) %>
+            <div>
+              <div class="fw-semibold"><%= post.nui.name %></div>
+              <div class="text-muted small"><%= l(post.created_at, format: :short) rescue post.created_at.to_s(:short) %></div>
+            </div>
+          </div>
+
+          <% if post.post.present? %>
+            <p class="mb-2"><%= simple_format(h(post.post)) %></p>
+          <% end %>
+
+          <% if post.image&.attached? %>
+            <div class="mb-2">
+              <%= image_tag post.image.variant(resize_to_limit: [600, 600]).processed,
+                            class: "img-fluid rounded" %>
+            </div>
+          <% end %>
+
+          <div class="d-flex align-items-center gap-3 small">
+            <span>いいね: <%= post.likes.size %></span>
+            <span>コメント: <%= post.comments.size %></span>
+
+            <%= link_to "詳細", [post.nui, post], class: "ms-auto" %>
+
+            <% if user_signed_in? %>
+              <% liked = post.liked_users.exists?(current_user.id) %>
+              <% if liked %>
+                <%= button_to "いいね解除", [post.nui, post, :like], method: :delete, class: "btn btn-sm btn-outline-secondary" %>
+              <% else %>
+                <%= button_to "いいね", [post.nui, post, :like], method: :post, class: "btn btn-sm btn-outline-primary" %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted">まだ投稿がありません。</p>
+  <% end %>
+</div>

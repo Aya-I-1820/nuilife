@@ -1,7 +1,8 @@
 class Nui < ApplicationRecord
   belongs_to :user
   has_many :posts, dependent: :destroy
-
+  has_many :comments, dependent: :destroy
+  
   has_one_attached :avatar  # アイコン画像をつけたい場合（Active Storage）
   
   validates :name, presence: true, length: { maximum: 30 }

@@ -7,14 +7,14 @@
     </div>
   </div>
 
-  <% if post.content.present? %>
-    <p class="mb-2"><%= simple_format(h(post.content)) %></p>
+  <% if post.post.present? %>
+    <p class="mb-2"><%= simple_format(h(post.post)) %></p>
   <% end %>
 
   <%# 画像を添付している場合の表示（Active Storageを使っている場合） %>
   <% if post.respond_to?(:image) && post.image&.attached? %>
     <div class="mb-2">
-      <%= image_tag post.image.variant(resize_to_limit: [1200, 1200]) %>
+      <%= image_tag @post.image.variant(resize_to_limit: [1200, 1200]) %>
     </div>
   <% end %>
 
@@ -25,8 +25,7 @@
     <%= link_to "詳細", [post.nui, post], class: "ms-auto" %>
 
     <%# いいね（ユーザー単位） %>
-    <% if user_signed_in? %>
-      <% liked = post.liked_users.include?(current_user) %>
+    <% liked = user_signed_in? && @post.liked_users.exists?(current_user.id) %>
       <% if liked %>
         <%= button_to "いいね解除", [post.nui, post, :like],
                       method: :delete, class: "btn btn-sm btn-outline-secondary" %>

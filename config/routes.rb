@@ -1,17 +1,15 @@
-# config/routes.rb
 Rails.application.routes.draw do
-  get 'home/index'
-  root "home#index"                       # トップ画面
-  devise_for :users                       # ← 1回だけ
+  root "home#index"
+  devise_for :users
 
-  # ぬい → 投稿 → コメント/いいね（ユーザー単位）
+  # みんなの投稿一覧（非ネスト）
+  resources :posts, only: [:index]
+
+  # 既存：ぬい配下の投稿（詳細/作成など）
   resources :nuis do
     resources :posts do
+      resource :like, only: [:create, :destroy]  # ← 単数資源！
       resources :comments, only: [:create, :destroy]
-      resource  :like,     only: [:create, :destroy]  # 単数資源: /posts/:post_id/like
     end
   end
-
-  # ヘルスチェック
-  get "up" => "rails/health#show", as: :rails_health_check
 end

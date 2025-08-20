@@ -18,8 +18,8 @@
   </div>
 
   <div class="mb-3">
-    <%= f.label :avatar, "アイコン画像" %>
-    <%= f.file_field :avatar, accept: "image/png,image/jpeg,image/webp", class: "form-control" %>
+     <%= f.label :avatar, "プロフィール画像" %><br>
+     <%= f.file_field :avatar, accept: "image/*" %>
 
     <% if @nui.avatar.attached? %>
       <div class="mt-2">

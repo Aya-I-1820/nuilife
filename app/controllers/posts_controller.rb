@@ -1,8 +1,18 @@
-# app/controllers/posts_controller.rb
 class PostsController < ApplicationController
-  before_action :authenticate_user!
-  before_action :set_nui
-  before_action :set_post, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, except: [:index, :show]
+
+  # 読み取り用（他人のぬいも可）
+  before_action :set_nui_for_read, only: [:show]
+
+  # 書き込み用（自分のぬいのみ）
+  before_action :set_nui_for_write, only: [:new, :create, :edit, :update, :destroy]
+
+  before_action :set_post_for_read,  only: [:show]
+  before_action :set_post_for_write, only: [:edit, :update, :destroy]
+
+  def index
+    @posts = Post.includes(:nui, :likes, :comments).order(created_at: :desc)
+  end
 
   def new
     @post = @nui.posts.build
@@ -17,10 +27,12 @@ class PostsController < ApplicationController
     end
   end
 
-  def show; end
+  def show
+    @comments = @post.comments.includes(:nui).order(created_at: :asc)
+  end
 
-  # （編集や削除を入れる場合）
   def edit; end
+
   def update
     if @post.update(post_params)
       redirect_to [@nui, @post], notice: "投稿を更新しました"
@@ -28,21 +40,33 @@ class PostsController < ApplicationController
       render :edit, status: :unprocessable_entity
     end
   end
+
   def destroy
     @post.destroy
     redirect_to root_path, notice: "投稿を削除しました"
   end
 
   private
-  def set_nui
-    @nui = current_user.nuis.find(params[:nui_id])  # 自分のぬいのみ
+
+  # ---- READ（他人OK）----
+  def set_nui_for_read
+    @nui = Nui.find(params[:nui_id])
   end
 
-  def set_post
+  def set_post_for_read
+    @post = @nui.posts.find(params[:id])
+  end
+
+  # ---- WRITE（自分のぬい限定）----
+  def set_nui_for_write
+    @nui = current_user.nuis.find(params[:nui_id])
+  end
+
+  def set_post_for_write
     @post = @nui.posts.find(params[:id])
   end
 
   def post_params
-    params.require(:post).permit(:content, :image)
+    params.require(:post).permit(:post, :image)
   end
 end

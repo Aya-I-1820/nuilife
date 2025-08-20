@@ -22,7 +22,8 @@
     <% else %>
       | <%= link_to "ぬいを作る", new_nui_path %>
     <% end %>
-    | <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete } %>
+    | <%= link_to "みんなの投稿", posts_path %>
+    | <%= button_to "ログアウト", destroy_user_session_path, method: :delete, class: "btn btn-link" %>
   <% end %>
 </nav>
 
