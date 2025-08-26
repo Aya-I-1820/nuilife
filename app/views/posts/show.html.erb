@@ -1,4 +1,7 @@
-<div class="mb-3">
+<div class="mb-3 d-flex align-items-center gap-2">
+  <%= link_to nui_path(@nui) do %>
+    <%= avatar_for(@nui, size: 40) %>
+  <% end %>
   <strong><%= @nui.name %></strong>
 </div>
 <p><%= simple_format(h(@post.post)) %></p>
@@ -8,17 +11,6 @@
 <% end %>
 
 
-<% @post.comments.each do |comment| %>
-  <div class="comment">
-    <strong><%= comment.nui.name %></strong>:
-    <%= comment.content %>
-
-    <% if comment.nui == current_nui %>
-      <%= link_to "削除", post_comment_path(@post, comment),
-                  method: :delete, data: { confirm: "削除しますか？" } %>
-    <% end %>
-  </div>
-<% end %>
 
 <hr>
 <h2 class="h5 mt-4">コメント</h2>
@@ -27,7 +19,9 @@
   <div class="vstack gap-3 mb-3">
     <% @comments.each do |c| %>
       <div class="d-flex align-items-start gap-2">
-        <%= avatar_for(c.nui, size: 28) %>
+        <%= link_to nui_path(c.nui) do %>
+          <%= avatar_for(c.nui, size: 28) %>
+        <% end %>
         <div>
           <div class="small text-muted"><strong><%= c.nui.name %></strong></div>
           <div><%= simple_format(h(c.content)) %></div>

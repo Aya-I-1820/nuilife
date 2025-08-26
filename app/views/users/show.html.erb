@@ -1,0 +1,53 @@
+<div class="container py-4">
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <%= user_avatar(@user, size: 96) %>
+    <div>
+      <h1 class="h4 m-0"><%= user_name(@user) %></h1>
+      <% if user_signed_in? && current_user == @user %>
+        <div class="text-muted small">あなたのプロフィール</div>
+      <% end %>
+    </div>
+  </div>
+
+  <h2 class="h5 mb-3">フォロー中のぬい</h2>
+  <% if @followed_nuis.any? %>
+    <div class="row g-3 mb-4">
+      <% @followed_nuis.each do |nui| %>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="card p-3 d-flex flex-row align-items-center gap-3">
+            <%= link_to nui_path(nui) do %>
+              <%= avatar_for(nui, size: 56) %>
+            <% end %>
+            <div>
+              <div class="fw-semibold"><%= link_to nui.name, nui_path(nui) %></div>
+              <div class="text-muted small">フォロワー <%= nui.followers.count %></div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted">まだフォロー中のぬいはありません。</p>
+  <% end %>
+
+  <h2 class="h5 mb-3">管理しているぬい</h2>
+  <% if @managed_nuis.any? %>
+    <div class="row g-3">
+      <% @managed_nuis.each do |nui| %>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="card p-3 d-flex flex-row align-items-center gap-3">
+            <%= link_to nui_path(nui) do %>
+              <%= avatar_for(nui, size: 56) %>
+            <% end %>
+            <div>
+              <div class="fw-semibold"><%= link_to nui.name, nui_path(nui) %></div>
+              <div class="text-muted small"><%= truncate(nui.profile.to_s, length: 60) %></div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted">まだ管理しているぬいはありません。</p>
+  <% end %>
+</div>

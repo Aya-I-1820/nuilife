@@ -1,9 +1,14 @@
+<!-- app/views/posts/_post_card.html.erb -->
 <div class="card p-3">
   <div class="d-flex align-items-center gap-2 mb-2">
-    <%= avatar_for(post.nui, size: 40) %>
+    <%= link_to nui_path(post.nui) do %>
+      <%= avatar_for(post.nui, size: 40) %>
+    <% end %>
     <div>
-      <div class="fw-semibold"><%= post.nui.name %></div>
-      <div class="text-muted small"><%= l(post.created_at, format: :short) rescue post.created_at.to_s(:short) %></div>
+      <div class="fw-semibold"><%= link_to post.nui.name, nui_path(post.nui) %></div>
+      <div class="text-muted small">
+        <%= l(post.created_at, format: :short) rescue post.created_at.to_s(:short) %>
+      </div>
     </div>
   </div>
 
@@ -11,10 +16,10 @@
     <p class="mb-2"><%= simple_format(h(post.post)) %></p>
   <% end %>
 
-  <%# 画像を添付している場合の表示（Active Storageを使っている場合） %>
-  <% if post.respond_to?(:image) && post.image&.attached? %>
+  <% if post.image&.attached? %>
     <div class="mb-2">
-      <%= image_tag @post.image.variant(resize_to_limit: [1200, 1200]) %>
+      <%= image_tag post.image.variant(resize_to_limit: [600, 600]).processed,
+                    class: "img-fluid rounded" %>
     </div>
   <% end %>
 
@@ -24,8 +29,8 @@
 
     <%= link_to "詳細", [post.nui, post], class: "ms-auto" %>
 
-    <%# いいね（ユーザー単位） %>
-    <% liked = user_signed_in? && @post.liked_users.exists?(current_user.id) %>
+    <% if user_signed_in? %>
+      <% liked = post.liked_users.exists?(current_user.id) %>
       <% if liked %>
         <%= button_to "いいね解除", [post.nui, post, :like],
                       method: :delete, class: "btn btn-sm btn-outline-secondary" %>

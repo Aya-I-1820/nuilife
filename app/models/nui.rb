@@ -4,6 +4,9 @@ class Nui < ApplicationRecord
   has_many :comments, dependent: :destroy
   
   has_one_attached :avatar  # アイコン画像をつけたい場合（Active Storage）
+
+  has_many :follows,   dependent: :destroy
+  has_many :followers, through: :follows, source: :user
   
   validates :name, presence: true, length: { maximum: 30 }
   validates :profile, length: { maximum: 300 }, allow_blank: true
