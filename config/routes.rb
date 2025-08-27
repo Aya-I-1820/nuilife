@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
   get 'users/show'
   root "home#index"
-  devise_for :users
+  devise_for :users, controllers: {
+  registrations: 'users/registrations'
+}
+
 
   # みんなの投稿一覧（非ネスト）
   resources :posts, only: [:index]

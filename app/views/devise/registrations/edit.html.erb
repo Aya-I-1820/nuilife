@@ -1,0 +1,66 @@
+<div class="container py-5" style="max-width:720px">
+  <h1 class="h3 fw-bold mb-4 text-center">アカウントを編集</h1>
+
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+  <div class="card shadow-sm">
+    <div class="card-body p-4">
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name),
+                   html: { method: :put, multipart: true }) do |f| %>
+        <!-- アイコン -->
+        <div class="mb-3">
+          <% if resource.avatar&.attached? %>
+            <%= image_tag resource.avatar.variant(resize_to_fill: [96,96]).processed,
+                          class: "rounded-circle border mb-2" %>
+          <% else %>
+            <%= image_tag "no_image.svg", size: "96x96",
+                          class: "rounded-circle border mb-2" %>
+          <% end %>
+          <%= f.file_field :avatar, accept: "image/*", class: "form-control" %>
+        </div>
+
+        <!-- ユーザー名 -->
+        <div class="mb-3">
+          <%= f.label :name, "ユーザー名", class: "form-label" %>
+          <%= f.text_field :name, class: "form-control", maxlength: 30 %>
+        </div>
+
+        <!-- プロフィール -->
+        <div class="mb-3">
+          <%= f.label :profile, "プロフィール", class: "form-label" %>
+          <%= f.text_area :profile, class: "form-control", rows: 5,
+                          placeholder: "自己紹介やリンクなど" %>
+        </div>
+
+        <!-- メールアドレス -->
+        <div class="mb-3">
+          <%= f.label :email, "メールアドレス", class: "form-label" %>
+          <%= f.email_field :email, class: "form-control" %>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- パスワード変更 -->
+        <h2 class="h6 mb-3">パスワード変更（必要な場合のみ）</h2>
+        <div class="mb-3">
+          <%= f.label :password, "新しいパスワード", class: "form-label" %>
+          <%= f.password_field :password, autocomplete: "new-password", class: "form-control" %>
+        </div>
+        <div class="mb-3">
+          <%= f.label :password_confirmation, "新しいパスワード（確認）", class: "form-label" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control" %>
+        </div>
+
+
+
+        <div class="d-grid">
+          <%= f.submit "変更を保存", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <%= link_to "← プロフィールに戻る", user_path(current_user) %>
+  </div>
+</div>

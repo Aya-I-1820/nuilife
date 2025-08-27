@@ -5,7 +5,7 @@ module NuisHelper
                 class: "rounded-circle",
                 alt: "#{nui.name}のアイコン"
     else
-      image_tag "default_avatar.png", size: "#{size}x#{size}",
+      image_tag "no_image.svg", size: "#{size}x#{size}",
                 class: "rounded-circle",
                 alt: "デフォルトアイコン"
     end
