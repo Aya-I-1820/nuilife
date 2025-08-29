@@ -1,0 +1,19 @@
+<div class="container py-4">
+  <h1 class="h5 mb-3">メッセージ</h1>
+
+  <% if @conversations.any? %>
+    <ul class="list-unstyled">
+      <% @conversations.each do |c| %>
+        <% other = (c.user1_id == current_user.id) ? c.user2 : c.user1 %>
+        <li class="py-2 border-bottom">
+          <%= link_to conversation_path(c), class: "d-flex align-items-center gap-2 text-decoration-none text-dark" do %>
+            <%= user_avatar(other, size: 32) %>
+            <span class="fw-semibold"><%= user_name(other) %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-muted">会話はまだありません。</p>
+  <% end %>
+</div>

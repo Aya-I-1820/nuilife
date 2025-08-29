@@ -1,5 +1,26 @@
 
+// 1) BootstrapのSass関数を先に読み込み
+@import "bootstrap/functions";
+
+// 2) ここで変数を上書き（Bootstrap本体より前！）
+$primary:  #FF9E80;   // ロゴのオレンジ
+$body-bg:  #FFF8F0;   // ふんわり背景
+
+// （任意）テーマカラーのマップも上書きしたい場合
+@import "bootstrap/variables";
+$theme-colors: map-merge(
+  $theme-colors,
+  (
+    "primary": $primary,
+    "secondary": #8D8D8D
+  )
+);
+
+// 3) Bootstrap本体を最後に取り込む
 @import "bootstrap";
+
+// 4) 自作スタイルは一番最後
+@import "custom";
 
 .avatar-circle {
     display: inline-block;
@@ -17,3 +38,57 @@
     border-radius: 50%;
   }
   
+  .btn-primary {
+    color: white; // 通常時の文字色
+  
+    &:hover,
+    &:focus {
+      color: white; // ホバー時も文字色を白に固定
+      background-color: darken($primary, 7%); // 少し濃く
+      border-color: darken($primary, 7%);
+    }
+  }
+  
+  .btn-outline-primary {
+    &:hover,
+    &:focus {
+      color: white; // 白抜き文字
+      background-color: $primary; // ブランドカラーの背景
+      border-color: $primary;
+    }
+  }
+
+  /* 通常の成功・notice メッセージをピスタチオグリーンに */
+.alert-notice,
+.alert-success {
+  background-color: #A8E6CF !important;
+  border-color: #A8E6CF !important;
+  color: #333; /* 文字色は濃いグレーで読みやすく */
+}
+
+.alert-alert,
+.alert-danger {
+  background-color: #FF9E80 !important; /* 今のブランドカラー系 */
+  border-color: #FF9E80 !important;
+  color: white;
+}
+
+/* ピスタチオボタン（やさしい緑） */
+.btn-pistachio {
+  background-color: #A8E6CF;
+  border-color: #A8E6CF;
+  color: #333;
+}
+.btn-pistachio:hover,
+.btn-pistachio:focus {
+  background-color: darken(#A8E6CF, 6%);
+  border-color: darken(#A8E6CF, 6%);
+  color: #333;
+}
+
+/* 危険操作ボタン（赤系はBootstrap既定のbtn-dangerを使用） */
+.btn-danger:hover,
+.btn-danger:focus {
+  /* 少しだけ濃くしてコントラスト確保 */
+  filter: brightness(0.95);
+}

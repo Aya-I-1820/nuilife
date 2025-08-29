@@ -13,4 +13,8 @@ class User < ApplicationRecord
   has_many :followed_nuis, through: :follows, source: :nui
 
   has_one_attached :avatar 
+
+  has_many :messages, dependent: :destroy
+
+  
 end

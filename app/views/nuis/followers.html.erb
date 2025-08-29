@@ -1,24 +1,37 @@
-<!-- app/views/nuis/followers.html.erb -->
 <div class="container py-4">
   <h1 class="h5 mb-3"><%= @nui.name %> のフォロワー</h1>
 
   <div class="mb-3 text-muted">
-    フォロワー数：<strong><%= @nui.respond_to?(:followers_count) ? @nui.followers_count : @nui.followers.count %></strong>
+    フォロワー数：
+    <strong><%= @nui.respond_to?(:followers_count) ? @nui.followers_count : @nui.followers.count %></strong>
   </div>
 
   <% if @follows.any? %>
-    <div class="vstack gap-2">
+    <ul class="list-unstyled">
       <% @follows.each do |follow| %>
         <% user = follow.user %>
-        <div class="card p-3">
-          <div class="fw-semibold"><%= user.try(:name).presence || user.email %></div>
-          <div class="text-muted small">フォロー日時：<%= l(follow.created_at, format: :short) rescue follow.created_at.to_s(:short) %></div>
-        </div>
+        <li class="d-flex align-items-center gap-2 py-2 border-bottom">
+          <!-- アイコン -->
+          <%= link_to user_path(user) do %>
+            <% if user.avatar&.attached? %>
+              <%= image_tag user.avatar.variant(resize_to_fill: [40,40]).processed,
+                            class: "rounded-circle border" %>
+            <% else %>
+              <%= image_tag "no_image.svg", size: "40x40", class: "rounded-circle border" %>
+            <% end %>
+          <% end %>
+
+          <!-- ユーザー名（フォロワーID） -->
+          <%= link_to user_name(user), user_path(user),
+                      class: "fw-semibold text-decoration-none text-dark" %>
+        </li>
       <% end %>
-    </div>
+    </ul>
   <% else %>
     <p class="text-muted">まだフォロワーはいません。</p>
   <% end %>
 
-  <div class="mt-3"><%= link_to "← ぬいのプロフィールへ戻る", @nui %></div>
+  <div class="mt-3">
+    <%= link_to "← ぬいのプロフィールへ戻る", @nui %>
+  </div>
 </div>

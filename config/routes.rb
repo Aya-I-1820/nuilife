@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get 'messages/create'
+  get 'conversations/index'
+  get 'conversations/show'
+  get 'conversations/create'
   get 'users/show'
   root "home#index"
   devise_for :users, controllers: {
@@ -21,5 +25,9 @@ Rails.application.routes.draw do
       resource :like, only: [:create, :destroy]  # ← 単数資源！
       resources :comments, only: [:create, :destroy]
     end
+  end
+
+  resources :conversations, only: [:index, :show, :create] do
+    resources :messages, only: [:create]
   end
 end

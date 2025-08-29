@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_27_125033) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_29_055142) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -49,6 +49,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_27_125033) do
     t.index ["post_id"], name: "index_comments_on_post_id"
   end
 
+  create_table "conversations", force: :cascade do |t|
+    t.integer "user1_id", null: false
+    t.integer "user2_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user1_id", "user2_id"], name: "index_conversations_on_user1_id_and_user2_id", unique: true
+    t.index ["user1_id"], name: "index_conversations_on_user1_id"
+    t.index ["user2_id"], name: "index_conversations_on_user2_id"
+  end
+
   create_table "follows", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "nui_id", null: false
@@ -67,6 +77,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_27_125033) do
     t.index ["post_id"], name: "index_likes_on_post_id"
     t.index ["user_id", "post_id"], name: "index_likes_on_user_id_and_post_id", unique: true
     t.index ["user_id"], name: "index_likes_on_user_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.integer "conversation_id", null: false
+    t.integer "user_id", null: false
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "nuis", force: :cascade do |t|
@@ -110,5 +130,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_27_125033) do
   add_foreign_key "follows", "users"
   add_foreign_key "likes", "posts"
   add_foreign_key "likes", "users"
+  add_foreign_key "messages", "conversations"
+  add_foreign_key "messages", "users"
   add_foreign_key "nuis", "users"
 end

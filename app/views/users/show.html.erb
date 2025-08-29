@@ -2,10 +2,22 @@
   <div class="d-flex align-items-center gap-3 mb-4">
     <%= user_avatar(@user, size: 96) %>
     <div>
-      <h1 class="h4 m-0"><%= user_name(@user) %></h1>
-      <% if user_signed_in? && current_user == @user %>
-        <div class="text-muted small">あなたのプロフィール</div>
-      <% end %>
+      <h1 class="h4 m-0 d-flex align-items-center gap-2">
+        <span><%= user_name(@user) %></span>
+
+        <% if user_signed_in? %>
+          <% if current_user == @user %>
+            <%= link_to "プロフィール編集",
+                        edit_user_registration_path,
+                        class: "btn btn-sm btn-outline-secondary" %>
+          <% else %>
+            <%= button_to "DMする",
+                          conversations_path(user_id: @user.id),
+                          method: :post,
+                          class: "btn btn-sm btn-outline-primary" %>
+          <% end %>
+        <% end %>
+      </h1>
     </div>
   </div>
 

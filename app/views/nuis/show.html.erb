@@ -1,49 +1,80 @@
+<!-- app/views/nuis/show.html.erb -->
 <div class="container py-4">
 
-  <!-- ヘッダー：アイコン + 名前 + プロフィール -->
+<!-- ぬいのヘッダー（アイコン・名前・プロフィール） -->
+<div class="d-flex align-items-start gap-3 mb-3">
+  <%= avatar_for(@nui, size: 96) %>
+  <div>
+<h1 class="h4 mb-1 d-flex align-items-center gap-2">
+  <span><%= @nui.name %></span>
+
+  <% if user_signed_in? && @nui.user_id == current_user.id %>
+    <%= link_to "このぬいで投稿する",
+                new_nui_post_path(@nui),
+                class: "btn btn-sm btn-primary" %>
+
+    <%= link_to "プロフィール編集",
+                edit_nui_path(@nui),
+                class: "btn btn-sm btn-pistachio" %>
+
+    <%# 最後の1体は削除不可（押せてもコントローラ側で防御） %>
+    <% if current_user.nuis.count > 1 %>
+      <%= button_to "ぬいを削除する",
+                    nui_path(@nui),
+                    method: :delete,
+                    data: { turbo_confirm: "このぬいを削除します。よろしいですか？" },
+                    class: "btn btn-sm btn-danger" %>
+    <% else %>
+      <button type="button" class="btn btn-sm btn-danger" disabled>
+        ぬいを削除する
+      </button>
+      <span class="text-danger small">※ ぬいがいなくなってしまうため、削除できません</span>
+    <% end %>
+  <% end %>
+</h1>
+
+    <div class="text-muted"><%= simple_format(h(@nui.profile.to_s)) %></div>
+  </div>
+</div>
+
+  <!-- フォロー情報＆ボタン -->
   <div class="d-flex align-items-center gap-3 mb-3">
-    <%= avatar_for(@nui, size: 128) %>
+    <% followers_count = @nui.respond_to?(:followers_count) ? @nui.followers_count : @nui.followers.count %>
     <div>
-      <h1 class="h3 m-0"><%= @nui.name %></h1>
-      <% if @nui.profile.present? %>
-        <p class="text-muted mb-0"><%= simple_format(@nui.profile) %></p>
+      フォロワー:
+      <strong>
+        <%= link_to followers_count, followers_nui_path(@nui), class: "text-decoration-none" %>
+      </strong>
+    </div>
+
+    <% if user_signed_in? %>
+      <% following = current_user.followed_nuis.exists?(@nui.id) %>
+      <% if following %>
+        <%= button_to "フォロー解除", [@nui, :follow],
+                      method: :delete, class: "btn btn-outline-secondary btn-sm" %>
+      <% else %>
+        <%= button_to "フォローする",  [@nui, :follow],
+                      method: :post,    class: "btn btn-primary btn-sm" %>
       <% end %>
+    <% end %>
+  </div>
+
+  <!-- もちぬしプロフィール（新規追加） -->
+  <div class="card mb-4 border-0">
+    <div class="card-body d-flex align-items-center gap-3">
+      <%= link_to user_path(@nui.user) do %>
+        <%= user_avatar(@nui.user, size: 56) %>
+      <% end %>
+      <div>
+        <div class="text-muted small mb-1">あるじ</div>
+        <div class="fw-semibold">
+          <%= link_to user_name(@nui.user), user_path(@nui.user), class: "text-decoration-none" %>
+        </div>
+      </div>
     </div>
   </div>
 
-<div class="mb-2">
-  フォロワー: <strong><%= @nui.respond_to?(:followers_count) ? @nui.followers_count : @nui.followers.count %></strong>
-  <%= link_to "（一覧を見る）", followers_nui_path(@nui), class: "ms-2" %>
-</div>
-
-
-<% if user_signed_in? %>
-  <% following = current_user.followed_nuis.exists?(@nui.id) %>
-  <% if following %>
-    <%= button_to "フォロー解除", [@nui, :follow], method: :delete,
-                  class: "btn btn-outline-secondary btn-sm" %>
-  <% else %>
-    <%= button_to "フォローする",  [@nui, :follow], method: :post,
-                  class: "btn btn-primary btn-sm" %>
-  <% end %>
-<% end %>
-
-  <!-- オーナーのみ操作ボタン -->
-  <% if user_signed_in? && @nui.user_id == current_user.id %>
-    <div class="mb-4 d-flex gap-2">
-      <%= link_to "このぬいで投稿する", new_nui_post_path(@nui), class: "btn btn-primary" %>
-      <%= link_to "プロフィールを編集", edit_nui_path(@nui), class: "btn btn-outline-secondary" %>
-      <%= link_to "ぬいを削除", nui_path(@nui),
-                  data: { turbo_method: :delete, turbo_confirm: "削除しますか？" },
-                  class: "btn btn-outline-danger" %>
-    </div>
-  <% end %>
-
-  <hr>
-
-  <!-- 投稿一覧 -->
- 
-
+  <!-- ぬいのポスト一覧（既存） -->
   <% if @posts.any? %>
     <div class="vstack gap-3">
       <% @posts.each do |post| %>
@@ -53,5 +84,5 @@
   <% else %>
     <p class="text-muted">まだ投稿がありません。</p>
   <% end %>
-</div>
 
+</div>

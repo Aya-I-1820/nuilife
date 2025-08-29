@@ -5,27 +5,85 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%= yield %>
-<nav>
-  <% if user_signed_in? %>
-    <% nuis = current_user.nuis.where.not(id: nil) %> <!-- 未保存を確実に除外 -->
-    <% if nuis.exists? %>
-      <% nuis.each do |nui| %>
-        | <%= link_to "#{nui.name}で投稿", new_nui_post_path(nui) %>
-      <% end %>
-      | <%= link_to "新しいぬいを作る", new_nui_path %>
-    <% else %>
-      | <%= link_to "ぬいを作る", new_nui_path %>
-    <% end %>
-    | <%= link_to "みんなの投稿", posts_path %>
-    | <%= button_to "ログアウト", destroy_user_session_path, method: :delete, class: "btn btn-link" %>
-  <% end %>
-</nav>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <div class="container-fluid">
+      <div class="row">
+       
+       <% if user_signed_in? %>
+        <!-- 左側メニュー -->
+        <aside class="col-3 col-md-2 bg-light min-vh-100 border-end p-3">
+          <div class="mb-4 text-center">
+            <%= link_to root_path do %>
+              <%= image_tag "logo.PNG", alt: "ロゴ", class: "img-fluid", style: "max-height:60px;" %>
+            <% end %>
+          </div>
 
+          <% if user_signed_in? %>
+            <!-- ユーザー -->
+            <div class="mb-4 text-center">
+              <%= link_to user_path(current_user), class: "text-decoration-none text-dark" do %>
+                <% if current_user.avatar&.attached? %>
+                  <%= image_tag current_user.avatar.variant(resize_to_fill: [64,64]).processed,
+                                class: "rounded-circle border mb-2" %>
+                <% else %>
+                  <%= image_tag "no_image.svg", size: "64x64", class: "rounded-circle border mb-2" %>
+                <% end %>
+                <div><%= user_name(current_user) %></div>
+              <% end %>
+            </div>
+
+            <!-- 管理しているぬい一覧 -->
+            <div class="mb-4">
+              <h6 class="text-muted">ぬいたち</h6>
+             <ul class="list-unstyled">
+               <% current_user.nuis.select(&:persisted?).each do |nui| %>
+                 <li class="mb-2">
+                 <%= link_to nui_path(nui), class: "d-flex align-items-center text-dark text-decoration-none" do %>
+                 <% if nui.avatar&.attached? %>
+                 <%= image_tag nui.avatar.variant(resize_to_fill: [32,32]).processed,
+                        class: "rounded-circle border me-2" %>
+                 <% else %>
+                   <%= image_tag "no_image.svg", size: "32x32", class: "rounded-circle border me-2" %>
+                 <% end %>
+                 <span><%= nui.name %></span>
+                <% end %>
+                  </li>
+                <% end %>
+             </ul>
+
+              <%= link_to "＋ 新しいぬいを作る", new_nui_path, class: "btn btn-sm btn-outline-primary w-100" %>
+            </div>
+
+            <!-- ログアウト -->
+            <div class="text-center">
+            <%= button_to "ログアウト",
+              destroy_user_session_path,
+              method: :delete,
+              class: "btn btn-outline-danger btn-sm w-100" %>
+            </div>
+          <% end %>
+        </aside>
+
+        <!-- メインコンテンツ -->
+        <main class="col-9 col-md-10 p-4">
+          <%= render "devise/shared/flash" %>
+          <%= yield %>
+        </main>
+
+      <% else %>
+        <!-- 未ログイン時：コンテンツを全幅表示（メニュー無し） -->
+        <main class="col-12 p-4">
+          <%= render "devise/shared/flash" %>
+          <%= yield %>
+        </main>
+      <% end %>
+
+      </div>
+    </div>
   </body>
 </html>
