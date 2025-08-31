@@ -1,32 +1,34 @@
+# config/routes.rb
 Rails.application.routes.draw do
-  get 'messages/create'
-  get 'conversations/index'
-  get 'conversations/show'
-  get 'conversations/create'
-  get 'users/show'
   root "home#index"
+
   devise_for :users, controllers: {
-  registrations: 'users/registrations'
-}
+    registrations: 'users/registrations'
+  }
 
-
-  # みんなの投稿一覧（非ネスト）
-  resources :posts, only: [:index]
-
+  # ユーザープロフィール
   resources :users, only: [:show]
 
-  # 既存：ぬい配下の投稿（詳細/作成など）
+  # みんなの投稿一覧（グローバル）
+  resources :posts, only: [:index]
+
+  # ぬい配下（フォロー・投稿・コメント・いいね）
   resources :nuis do
     member do
-      get :followers   # ← /nuis/:id/followers
+      get :followers              # /nuis/:id/followers
     end
-    resource  :follow,   only: [:create, :destroy] 
+    resource  :follow, only: [:create, :destroy]
+
     resources :posts do
-      resource :like, only: [:create, :destroy]  # ← 単数資源！
+      collection do
+        get :drafts               # ★ 下書き一覧 /nuis/:nui_id/posts/drafts
+      end
+      resource  :like,    only: [:create, :destroy]   # 単数資源
       resources :comments, only: [:create, :destroy]
     end
   end
 
+  # DM
   resources :conversations, only: [:index, :show, :create] do
     resources :messages, only: [:create]
   end

@@ -18,8 +18,11 @@ class NuisController < ApplicationController
   end
 
   def show
-    @posts = @nui.posts.includes(:nui, :likes, :comments).order(created_at: :desc)
+    @posts = @nui.posts.published
+                   .includes(:nui, :likes, :comments, image_attachment: :blob)
+                   .order(created_at: :desc)
   end
+  
 
   def edit; end
 

@@ -1,15 +1,26 @@
-<h1><%= @nui.name %> として新規投稿</h1>
+<div class="container py-4">
+<div class="form-narrow">
+  <h1 class="h5 mb-3">
+    <span style="color: #FF9E80;"><%= @nui.name %></span> として新規投稿
+  </h1>
 
-<%= form_with model: [@nui, @post], local: true do |f| %>
-  <div class="mb-3">
-    <%= f.label :post, "本文" %>
-    <%= f.text_area :post, rows: 5, class: "form-control" %>
-  </div>
+  <%= form_with model: [@nui, @post], local: true do |f| %>
+    <div class="mb-3">
+      <%= f.label :post, "本文", class: "form-label" %>
+      <%= f.text_area :post, rows: 5, class: "form-control" %>
+    </div>
 
-  <div class="mb-3">
-    <%= f.label :image, "画像" %>
-    <%= f.file_field :image, class: "form-control" %>
-  </div>
+    <div class="mb-3">
+      <%= f.label :image, "画像", class: "form-label" %>
+      <%= f.file_field :image, class: "form-control" %>
+    </div>
 
-  <%= f.submit "投稿する", class: "btn btn-primary" %>
-<% end %>
+    <div class="d-flex gap-2">
+      <%= f.submit "投稿する", class: "btn btn-primary" %>
+      <%= f.submit "下書き保存", class: "btn btn-outline-secondary" %>
+      <%= link_to "下書き一覧", drafts_nui_posts_path(@nui),
+                  class: "btn btn-outline-primary" %>
+    </div>
+  <% end %>
+</div>
+</div>

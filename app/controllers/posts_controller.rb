@@ -1,69 +1,96 @@
+# app/controllers/posts_controller.rb
 class PostsController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show]
-
-  # 読み取り用（他人のぬいも可）
-  before_action :set_nui_for_read, only: [:show]
-
-  # 書き込み用（自分のぬいのみ）
-  before_action :set_nui_for_write, only: [:new, :create, :edit, :update, :destroy]
-
-  before_action :set_post_for_read,  only: [:show]
-  before_action :set_post_for_write, only: [:edit, :update, :destroy]
-
-  def index
-    @posts = Post.includes(:nui, :likes, :comments).order(created_at: :desc)
-  end
+  before_action :authenticate_user!
+  before_action :set_nui
+  before_action :set_post, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_owner!, only: [:new, :create, :edit, :update, :destroy, :drafts]
 
   def new
     @post = @nui.posts.build
   end
 
+  def index
+    @posts = Post.published
+                 .includes(:nui, :likes, :comments, image_attachment: :blob)
+                 .order(created_at: :desc)
+  end
+  
+
   def create
     @post = @nui.posts.build(post_params)
+
+    # どのボタンが押されたかで status を分岐
+    @post.status = (params[:commit] == "下書き保存") ? :draft : :published
+
     if @post.save
-      redirect_to [@nui, @post], notice: "投稿しました！"
+      if @post.draft?
+        redirect_to drafts_nui_posts_path(@nui), notice: "下書きを保存しました"
+      else
+        redirect_to [@nui, @post], notice: "投稿しました！"
+      end
     else
+      flash.now[:alert] = "保存できませんでした"
       render :new, status: :unprocessable_entity
     end
   end
 
-  def show
-    @comments = @post.comments.includes(:nui).order(created_at: :asc)
+  def edit
   end
 
-  def edit; end
-
   def update
-    if @post.update(post_params)
-      redirect_to [@nui, @post], notice: "投稿を更新しました"
+    # 編集でも押したボタンで分岐
+    next_status = (params[:commit] == "下書き保存") ? :draft : (params[:commit] == "公開する" ? :published : @post.status)
+    @post.assign_attributes(post_params.merge(status: next_status))
+
+    if @post.save
+      if @post.draft?
+        redirect_to drafts_nui_posts_path(@nui), notice: "下書きを更新しました"
+      else
+        redirect_to [@nui, @post], notice: "投稿を更新しました"
+      end
     else
+      flash.now[:alert] = "更新できませんでした"
       render :edit, status: :unprocessable_entity
     end
   end
 
+  def show
+    # 下書きは本人以外見せない
+    if @post.draft? && @post.nui.user_id != current_user.id
+      redirect_to @nui, alert: "この投稿は表示できません" and return
+    end
+
+    # ★ コメント一覧とフォーム用インスタンスを用意
+    @comments = @post.comments
+                     .includes(nui: { avatar_attachment: :blob })
+                     .order(created_at: :asc)
+    @comment  = @post.comments.build
+  end
+  
   def destroy
     @post.destroy
-    redirect_to root_path, notice: "投稿を削除しました"
+    redirect_to @nui, notice: "投稿を削除しました"
+  end
+
+  # 下書き一覧
+  def drafts
+  @posts = @nui.posts
+               .draft            
+               .includes(:nui, :likes, :comments, image_attachment: :blob)
+               .order(updated_at: :desc)
   end
 
   private
-
-  # ---- READ（他人OK）----
-  def set_nui_for_read
+  def set_nui
     @nui = Nui.find(params[:nui_id])
   end
 
-  def set_post_for_read
+  def set_post
     @post = @nui.posts.find(params[:id])
   end
 
-  # ---- WRITE（自分のぬい限定）----
-  def set_nui_for_write
-    @nui = current_user.nuis.find(params[:nui_id])
-  end
-
-  def set_post_for_write
-    @post = @nui.posts.find(params[:id])
+  def authorize_owner!
+    redirect_to root_path, alert: "権限がありません" unless @nui.user_id == current_user.id
   end
 
   def post_params

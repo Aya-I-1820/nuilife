@@ -92,3 +92,6 @@ $theme-colors: map-merge(
   /* 少しだけ濃くしてコントラスト確保 */
   filter: brightness(0.95);
 }
+
+.post-narrow { max-width: 720px; }
+.form-narrow { max-width: 720px; }

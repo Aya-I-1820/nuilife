@@ -10,5 +10,8 @@ class Post < ApplicationRecord
   alias_attribute :body, :post  # post.body で本文にアクセスできる
 
   validates :post, presence: true   # ← これで空保存を防止
+  
+  enum status: { published: 0, draft: 1 }
+  scope :published, -> { where(status: [Post.statuses[:published], nil]) }
 
 end
