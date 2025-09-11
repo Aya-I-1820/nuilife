@@ -94,4 +94,85 @@ $theme-colors: map-merge(
 }
 
 .post-narrow { max-width: 720px; }
+/* スマホでは制限解除して横幅いっぱいに */
+@media (max-width: 575.98px) {
+  .post-narrow {
+    max-width: 100%;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+} 
+
 .form-narrow { max-width: 720px; }
+.error-messages-narrow { 
+  max-width: 720px; 
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-like {
+  background: none;
+  border: none;
+}
+
+.like-heart {
+  font-size: 1.1rem;
+  line-height: 1;
+  vertical-align: middle;
+}
+.like-heart.liked { color: #FF9E80; }   /* いいね済みはブランド寄りのサーモンピンク */
+.btn-like:hover .like-heart { filter: brightness(0.85); }
+
+.like-count {
+  margin-left: .4rem;
+}
+
+/* サイドバーを画面高に固定（md以上） */
+.sidebar-full {
+  min-height: 100vh;
+  /* iOS セーフエリアに配慮（任意） */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* サイドバー内の縦スクロール許可（長いリスト用） */
+.sidebar-full {
+  overflow: auto;
+}
+
+/* オフキャンバス時はタップ余白を少し広げる（任意） */
+.offcanvas .btn,
+.offcanvas a {
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+}
+
+/* 横スクロール封じ（スマホ） */
+html, body {
+  overflow-x: hidden;
+}
+
+/* コンテナ系が 100vw を超えないように */
+.container-fluid, .row, main {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* カード内の長文・長いURLでのはみ出し対策 */
+.post-content, .comment-content, .card, .offcanvas {
+  overflow-wrap: anywhere;   /* or word-break: break-word; */
+}
+
+/* 画像・動画は親幅で収める */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ページネーションがはみ出すのを防ぐ */
+.pagination {
+  flex-wrap: wrap;
+}
+
+
+

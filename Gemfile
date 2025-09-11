@@ -75,3 +75,5 @@ gem "mini_magick"
 
 gem "bootstrap", "~> 5.3"
 gem "sassc-rails"
+
+gem 'kaminari'

@@ -1,0 +1,57 @@
+<!-- app/views/layouts/_sidebar.html.erb -->
+<div class="mb-4 text-center">
+  <%= link_to root_path do %>
+    <%= image_tag "logo.PNG", alt: "ロゴ", class: "img-fluid", style: "max-height:60px;" %>
+  <% end %>
+</div>
+
+<!-- ユーザー -->
+<div class="mb-4 text-center">
+  <%= link_to user_path(current_user), class: "text-decoration-none text-dark" do %>
+    <% if current_user.avatar&.attached? %>
+      <%= image_tag current_user.avatar.variant(resize_to_fill: [64,64]).processed,
+                    class: "rounded-circle border mb-2" %>
+    <% else %>
+      <%= image_tag "no_image.svg", size: "64x64", class: "rounded-circle border mb-2" %>
+    <% end %>
+    <div><%= user_name(current_user) %></div>
+  <% end %>
+</div>
+
+<!-- 検索 -->
+<div class="mb-3">
+  <%= form_with url: search_posts_path, method: :get, local: true, class: "d-flex" do %>
+    <%= text_field_tag :q, params[:q], class: "form-control form-control-sm me-2", placeholder: "投稿やぬい名を検索" %>
+    <%= submit_tag "検索", class: "btn btn-sm btn-outline-primary" %>
+  <% end %>
+</div>
+
+<!-- ぬい -->
+<div class="mb-4">
+  <h6 class="text-muted">ぬいたち</h6>
+  <ul class="list-unstyled">
+    <% current_user.nuis.select(&:persisted?).each do |nui| %>
+      <li class="mb-2">
+        <%= link_to nui_path(nui), class: "d-flex align-items-center text-dark text-decoration-none" do %>
+          <% if nui.avatar&.attached? %>
+            <%= image_tag nui.avatar.variant(resize_to_fill: [32,32]).processed,
+                          class: "rounded-circle border me-2" %>
+          <% else %>
+            <%= image_tag "no_image.svg", size: "32x32", class: "rounded-circle border me-2" %>
+          <% end %>
+          <span><%= nui.name %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+
+  <%= link_to "＋ 新しいぬいを作る", new_nui_path, class: "btn btn-sm btn-outline-primary w-100" %>
+</div>
+
+<!-- ログアウト -->
+<div class="text-center">
+  <%= button_to "ログアウト",
+      destroy_user_session_path,
+      method: :delete,
+      class: "btn btn-outline-danger btn-sm w-100" %>
+</div>

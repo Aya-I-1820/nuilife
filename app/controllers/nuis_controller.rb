@@ -21,7 +21,9 @@ class NuisController < ApplicationController
     @posts = @nui.posts.published
                    .includes(:nui, :likes, :comments, image_attachment: :blob)
                    .order(created_at: :desc)
+                   .page(params[:page]).per(10)
   end
+  
   
 
   def edit; end

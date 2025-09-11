@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Nuilife</title>
+    <title>ぬいらいふ</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <%= favicon_link_tag('favicon.ico') %>
   </head>
 
   <body>
@@ -14,63 +15,40 @@
     <div class="container-fluid">
       <div class="row">
        
-       <% if user_signed_in? %>
-        <!-- 左側メニュー -->
-        <aside class="col-3 col-md-2 bg-light min-vh-100 border-end p-3">
-          <div class="mb-4 text-center">
-            <%= link_to root_path do %>
-              <%= image_tag "logo.PNG", alt: "ロゴ", class: "img-fluid", style: "max-height:60px;" %>
-            <% end %>
-          </div>
+  <div class="container-fluid">
+    <div class="row">
 
-          <% if user_signed_in? %>
-            <!-- ユーザー -->
-            <div class="mb-4 text-center">
-              <%= link_to user_path(current_user), class: "text-decoration-none text-dark" do %>
-                <% if current_user.avatar&.attached? %>
-                  <%= image_tag current_user.avatar.variant(resize_to_fill: [64,64]).processed,
-                                class: "rounded-circle border mb-2" %>
-                <% else %>
-                  <%= image_tag "no_image.svg", size: "64x64", class: "rounded-circle border mb-2" %>
-                <% end %>
-                <div><%= user_name(current_user) %></div>
-              <% end %>
-            </div>
-
-            <!-- 管理しているぬい一覧 -->
-            <div class="mb-4">
-              <h6 class="text-muted">ぬいたち</h6>
-             <ul class="list-unstyled">
-               <% current_user.nuis.select(&:persisted?).each do |nui| %>
-                 <li class="mb-2">
-                 <%= link_to nui_path(nui), class: "d-flex align-items-center text-dark text-decoration-none" do %>
-                 <% if nui.avatar&.attached? %>
-                 <%= image_tag nui.avatar.variant(resize_to_fill: [32,32]).processed,
-                        class: "rounded-circle border me-2" %>
-                 <% else %>
-                   <%= image_tag "no_image.svg", size: "32x32", class: "rounded-circle border me-2" %>
-                 <% end %>
-                 <span><%= nui.name %></span>
-                <% end %>
-                  </li>
-                <% end %>
-             </ul>
-
-              <%= link_to "＋ 新しいぬいを作る", new_nui_path, class: "btn btn-sm btn-outline-primary w-100" %>
-            </div>
-
-            <!-- ログアウト -->
-            <div class="text-center">
-            <%= button_to "ログアウト",
-              destroy_user_session_path,
-              method: :delete,
-              class: "btn btn-outline-danger btn-sm w-100" %>
-            </div>
+      <% if user_signed_in? %>
+        <!-- ヘッダー（モバイルのみ表示） -->
+        <div class="d-md-none d-flex align-items-center justify-content-between border-bottom py-2">
+          <button class="btn btn-outline-primary ms-2" type="button"
+                  data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar"
+                  aria-controls="mobileSidebar" aria-label="メニュー">
+            ☰ メニュー
+          </button>
+          <%= link_to root_path, class: "me-3 text-decoration-none" do %>
+            ぬいらいふ
           <% end %>
+        </div>
+
+        <!-- モバイル：オフキャンバス -->
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="mobileSidebarLabel">メニュー</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="閉じる"></button>
+          </div>
+          <div class="offcanvas-body">
+            <%= render "layouts/sidebar" %>
+          </div>
+        </div>
+
+        <!-- 左側メニュー -->
+         <aside class="d-none d-md-block col-md-2 col-lg-2 bg-light border-end p-3 position-sticky top-0 sidebar-full">
+          <%= render "layouts/sidebar" %>
         </aside>
 
         <!-- メインコンテンツ -->
-        <main class="col-9 col-md-10 p-4">
+        <main class="col-12 col-md-10 p-3 p-sm-">
           <%= render "devise/shared/flash" %>
           <%= yield %>
         </main>

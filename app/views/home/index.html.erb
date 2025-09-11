@@ -32,6 +32,9 @@
             <%= render "posts/post_card", post: post %>
           <% end %>
         </div>
+        <div class="mt-3">
+            <%= paginate @posts_following, params: { tab: 'following' } %>
+        </div> 
       <% else %>
         <p class="text-muted">フォロー中のぬいの投稿はまだありません。</p>
         <p class="mb-0">
@@ -44,6 +47,9 @@
           <% @posts_all.each do |post| %>
             <%= render "posts/post_card", post: post %>
           <% end %>
+        </div>
+        <div class="mt-3">
+          <%= paginate @posts_all, params: { tab: 'all' } %>  <!-- ★タブ状態を維持 -->
         </div>
       <% else %>
         <p class="text-muted">まだ投稿がありません。</p>

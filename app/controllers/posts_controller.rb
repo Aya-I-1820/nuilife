@@ -1,7 +1,7 @@
 # app/controllers/posts_controller.rb
 class PostsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_nui
+  before_action :set_nui, only: [:new, :create, :edit, :update, :destroy, :show, :drafts]
   before_action :set_post, only: [:show, :edit, :update, :destroy]
   before_action :authorize_owner!, only: [:new, :create, :edit, :update, :destroy, :drafts]
 
@@ -13,7 +13,9 @@ class PostsController < ApplicationController
     @posts = Post.published
                  .includes(:nui, :likes, :comments, image_attachment: :blob)
                  .order(created_at: :desc)
+                 .page(params[:page]).per(10)
   end
+  
   
 
   def create
@@ -78,6 +80,18 @@ class PostsController < ApplicationController
                .draft            
                .includes(:nui, :likes, :comments, image_attachment: :blob)
                .order(updated_at: :desc)
+               .page(params[:page]).per(10)
+  end
+
+
+  def search
+    @q = params[:q].to_s.strip
+    @posts = Post.published
+                 .joins(:nui)
+                 .includes(:nui, :likes, :comments, image_attachment: :blob)
+                 .where("posts.post LIKE :q OR nuis.name LIKE :q", q: "%#{@q}%")
+                 .order(created_at: :desc)
+                 .page(params[:page]).per(10)
   end
 
   private

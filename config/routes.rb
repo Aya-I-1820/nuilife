@@ -10,7 +10,11 @@ Rails.application.routes.draw do
   resources :users, only: [:show]
 
   # みんなの投稿一覧（グローバル）
-  resources :posts, only: [:index]
+  resources :posts, only: [:index] do
+    collection do
+      get :search
+    end
+  end
 
   # ぬい配下（フォロー・投稿・コメント・いいね）
   resources :nuis do

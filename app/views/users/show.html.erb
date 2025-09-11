@@ -28,7 +28,7 @@
         <div class="col-12 col-sm-6 col-lg-4">
           <div class="card p-3 d-flex flex-row align-items-center gap-3">
             <%= link_to nui_path(nui) do %>
-              <%= avatar_for(nui, size: 56) %>
+              <%= nui_avatar_tag(nui, size: 56) %>
             <% end %>
             <div>
               <div class="fw-semibold"><%= link_to nui.name, nui_path(nui) %></div>
@@ -49,7 +49,7 @@
         <div class="col-12 col-sm-6 col-lg-4">
           <div class="card p-3 d-flex flex-row align-items-center gap-3">
             <%= link_to nui_path(nui) do %>
-              <%= avatar_for(nui, size: 56) %>
+              <%= nui_avatar_tag(nui, size: 56) %>
             <% end %>
             <div>
               <div class="fw-semibold"><%= link_to nui.name, nui_path(nui) %></div>

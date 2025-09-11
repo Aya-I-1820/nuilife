@@ -1,13 +1,13 @@
-<div class="post-narrow">
+<div class="post-narrow w-100">
   <div class="card p-3">
         <div class="d-flex align-items-center gap-2 mb-2">
       <%= link_to nui_path(post.nui) do %>
-        <%= avatar_for(post.nui, size: 40) %>
+        <%= nui_avatar_tag(post.nui, size: 40) %>
       <% end %>
       <div>
         <div class="fw-semibold"><%= link_to post.nui.name, nui_path(post.nui) %></div>
         <div class="text-muted small">
-          <%= l(post.created_at, format: :short) rescue post.created_at.to_s(:short) %>
+          <%= post.created_at.strftime("%Y/%m/%d %H:%M") %>
           <% if post.draft? %>
             <span class="badge text-bg-secondary ms-2">下書き</span>
           <% end %>
@@ -16,7 +16,7 @@
     </div>
 
     <% if post.post.present? %>
-      <p class="mb-2"><%= simple_format(h(post.post)) %></p>
+      <p class="mb-2 post-content"><%= simple_format(h(post.post)) %></p>
     <% end %>
 
     <% if post.image&.attached? %>
@@ -25,31 +25,36 @@
                       class: "img-fluid rounded" %>
       </div>
     <% end %>
-    <div class="d-flex align-items-center gap-3 small">
-      <span>いいね: <%= post.likes.size %></span>
-      <span>コメント: <%= post.comments.size %></span>
-
-      <%= link_to "詳細", [post.nui, post] %>
-
-      <% if user_signed_in? %>
-        <% liked = post.liked_users.exists?(current_user.id) %>
-        <% if liked %>
-          <%= button_to "いいね解除", [post.nui, post, :like],
-                        method: :delete, class: "btn btn-sm btn-outline-secondary ms-2" %>
-        <% else %>
-          <%= button_to "いいね", [post.nui, post, :like],
-                        method: :post, class: "btn btn-sm btn-outline-primary ms-2" %>
-        <% end %>
-
-        <% if post.nui.user_id == current_user.id %>
-          <%= link_to "編集", edit_nui_post_path(post.nui, post),
-                      class: "btn btn-sm btn-outline-secondary ms-2" %>
-          <%= button_to "削除", nui_post_path(post.nui, post),
-                        method: :delete,
-                        data: { turbo_confirm: "この投稿を削除します。よろしいですか？" },
-                        class: "btn btn-sm btn-danger ms-2" %>
-        <% end %>
+   <div class="d-flex align-items-center gap-3 small">
+  <!-- ❤ + カウント -->
+  <div class="d-flex align-items-center">
+    <% if user_signed_in? %>
+      <% liked = post.liked_users.exists?(current_user.id) %>
+      <%= button_to [post.nui, post, :like],
+          method: (liked ? :delete : :post),
+          class: "btn btn-like p-0",
+          form: { data: { turbo: "true" } } do %>
+        <span class="like-heart <%= 'liked' if liked %>">♡</span>
+        <span class="like-count"><%= post.likes.size %></span>
       <% end %>
-    </div>
+    <% else %>
+      <span class="text-muted">♡ <%= post.likes.size %></span>
+    <% end %>
+  </div>
+
+  <span>コメント: <%= post.comments.size %></span>
+  <%= link_to "詳細", [post.nui, post] %>
+
+  <% if user_signed_in? %>
+    <% if post.nui.user_id == current_user.id %>
+      <%= link_to "編集", edit_nui_post_path(post.nui, post),
+                  class: "btn btn-sm btn-outline-secondary ms-2" %>
+      <%= button_to "削除", nui_post_path(post.nui, post),
+                    method: :delete,
+                    data: { turbo_confirm: "この投稿を削除します。よろしいですか？" },
+                    class: "btn btn-sm btn-danger ms-2" %>
+    <% end %>
+  <% end %>
+</div>
   </div>
 </div>

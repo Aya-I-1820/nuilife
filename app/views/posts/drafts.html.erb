@@ -8,9 +8,9 @@
         <div class="post-narrow">
           <div class="card p-3 border-secondary-subtle">
             <div class="d-flex align-items-center gap-2 mb-2">
-              <%= avatar_for(@nui, size: 32) %>
+              <%= nui_avatar_tag(@nui, size: 32) %>
               <div class="small text-muted">
-                更新: <%= l(post.updated_at, format: :short) rescue post.updated_at.to_s(:short) %>
+                更新: <%= short_time(post.updated_at) %>
                 <span class="badge text-bg-secondary ms-2">下書き</span>
               </div>
             </div>
@@ -38,6 +38,7 @@
         </div>
       <% end %>
     </div>
+    <div class="mt-3"><%= paginate @posts %></div>
   <% else %>
     <p class="text-muted">下書きはありません。</p>
   <% end %>
