@@ -39,10 +39,14 @@
 ・推しのぬいの写真を投稿している人とコミュニケーションをとる  
 
 # 利用方法
-・ユーザー新規登録を行う、またはログインする  
-・タイムラインを運用するするぬいを登録する  
-・ぬいの写真をタイムライン別に投稿  
-・他のユーザーの投稿を閲覧し、気に入った投稿に「いいね」や「コメント」を残す  
+・ユーザー新規登録を行う、またはログインする<br><img width="631" height="358" alt="スクリーンショット 2025-10-01 224040" src="https://github.com/user-attachments/assets/a5c3e7ce-6662-49a9-8389-000bf456d51e" />
+  
+・タイムラインを運用するするぬいを登録する<br><img width="951" height="488" alt="スクリーンショット 2025-10-01 224207" src="https://github.com/user-attachments/assets/96722531-65c3-45b5-9542-09c3e461a01d" />
+
+・ぬいの写真をタイムライン別に投稿<br><img width="1010" height="479" alt="スクリーンショット 2025-10-01 224405" src="https://github.com/user-attachments/assets/c8d0615f-f8e4-4cb6-b81d-541f02821fde" />
+
+・他のユーザーの投稿を閲覧し、気に入った投稿に「いいね」や「コメント」を残す<br><img width="1034" height="775" alt="スクリーンショット 2025-10-01 224438" src="https://github.com/user-attachments/assets/9c53ff2a-6a91-494d-882b-0562b2d954bc" />
+
 
 # 機能一覧
 ・基本的なCRUD機能  
