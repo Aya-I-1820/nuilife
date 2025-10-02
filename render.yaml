@@ -1,6 +1,6 @@
 databases:
   - name: Nuisquare
-    databaseName: nuilifedata
+    databaseName: nuilifedata_7ely
     user: nuimaster
     region: Oregon
 
