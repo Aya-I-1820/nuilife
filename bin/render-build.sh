@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # exit on error
-set -o errexit
+set -euxo pipefail
 
-apt-get update && apt-get install -y libpq-dev
-bundle install
+bundle install --jobs=4 --retry=3
+bundle exec rails --version
 bundle exec rails assets:precompile
+bundle exec rails assets:clean
 bundle exec rails db:migrate
-bundle exec rails db:seed
